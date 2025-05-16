@@ -6,21 +6,25 @@
   </head>
   <body style="margin: 0px; overflow: hidden;">
     <a-scene embedded arjs>
-      <!-- Marker with glTF model -->
+      <!-- Marker with animated model -->
       <a-marker type="pattern" url="sun.patt">
-        <a-gltf-model
-          src="model/scene.gltf"
+        
+        <!-- Parent entity handles rotation -->
+        <a-entity
           position="0 1 -2"
-          rotation="-90 0 0"
           scale="1 1 1"
-          animation="property: rotation; to: 270 0 0; loop: true; dur: 5000; easing: linear">
+          animation="property: rotation; to: 0 0 360; loop: true; dur: 5000; easing: linear">
           
-        </a-gltf-model>
+          <!-- Child entity applies model tilt -->
+          <a-entity rotation="-90 0 0">
+            <a-gltf-model src="model/scene.gltf"></a-gltf-model>
+          </a-entity>
+        </a-entity>
+
+        <!-- Lighting -->
         <a-entity light="type: ambient; intensity: 1"></a-entity>
         <a-entity light="type: ambient; intensity: 0.5"></a-entity>
-
-  <!-- Directional light for highlights and shape -->
-  <a-entity light="type: directional; intensity: 10" position="0 4 1"></a-entity>
+        <a-entity light="type: directional; intensity: 0.1" position="0 4 1"></a-entity>
       </a-marker>
 
       <a-entity camera></a-entity>
