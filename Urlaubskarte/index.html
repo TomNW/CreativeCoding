@@ -7,8 +7,13 @@
   <a-scene embedded arjs>
     <!-- Use your custom marker pattern -->
     <a-marker type='pattern' url='sun.patt'>
-      <!-- Place your AR content inside the marker -->
-      <a-box position='0 0.5 0' material='opacity: 0.5;'></a-box>
+      <!-- Replace cube with a GLB model -->
+      <a-gltf-model 
+        src="Urlaubskarte/football-pele-cartoon/source/peléAnimação01.glb" 
+        position="0 0 0" 
+        scale="0.5 0.5 0.5" 
+        rotation="0 0 0">
+      </a-gltf-model>
     </a-marker>
     
     <!-- Separate camera entity -->
