@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AR-Würfel mit Webcam</title>
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- MindAR (für markerbasiertes AR) -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/aframe/mindar-aframe.prod.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #ar-scene {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene
+      mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/examples/image-tracking/assets/card-example/card.mind; autoStart: true; uiScanning: yes;"
+      embedded
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: true"
+      id="ar-scene"
+    >
+      <a-assets>
+        <!-- Hier kannst du später eigene Assets laden -->
+      </a-assets>
+
+      <!-- Kamera -->
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <!-- Würfel, erscheint wenn Marker erkannt wird -->
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-box position="0 0 0" material="color: red" depth="0.5" height="0.5" width="0.5"></a-box>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
