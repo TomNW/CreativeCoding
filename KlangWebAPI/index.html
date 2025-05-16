@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Web Audio API - Eigene Klänge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    button {
+      font-size: 20px;
+      padding: 15px 30px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Web Audio API - Ton abspielen</h1>
+  <button id="play">Ton abspielen</button>
+
+  <script>
+    // AudioContext erzeugen (einmal)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    document.getElementById('play').addEventListener('click', () => {
+      // Oszillator und Lautstärkeregler erzeugen
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      // Klang einstellen
+      oscillator.type = 'triangle'; // Wellenform: sine, square, triangle, sawtooth
+      oscillator.frequency.setValueAtTime(200.25, audioCtx.currentTime); // Tonhöhe: C5
+
+      // Lautstärke einstellen
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+
+      // Verbindungen: Oszillator -> Gain -> Lautsprecher
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      // Oszillator starten
+      oscillator.start();
+
+      // Nach 1 Sekunde stoppen
+      setTimeout(() => oscillator.stop(), 1000);
+    });
+  </script>
+
+</body>
+</html>

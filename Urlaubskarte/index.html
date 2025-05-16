@@ -3,7 +3,8 @@
   <head>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  </head>
+      
+</head>
   <body style="margin: 0px; overflow: hidden;">
     <a-scene embedded arjs>
       <!-- Marker with animated model -->
@@ -13,8 +14,10 @@
         <a-entity
           position="0 1 -2"
           scale="1 1 1"
-          animation="property: rotation; to: 0 0 360; loop: true; dur: 5000; easing: linear">
-          
+          animation="property: rotation; to: 0 0 360; loop: true; dur: 5000; easing: linear"
+          orbit-stars="count: 50; radius: 2; speed: 1">
+
+
           <!-- Child entity applies model tilt -->
           <a-entity rotation="-90 0 0">
             <a-gltf-model src="model/scene.gltf"></a-gltf-model>
@@ -29,5 +32,6 @@
 
       <a-entity camera></a-entity>
     </a-scene>
+    <script src="orbit-stars.js"></script>
   </body>
 </html>
