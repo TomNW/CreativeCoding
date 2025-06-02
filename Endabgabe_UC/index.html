@@ -1,33 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-    </head>
-    
-<body style="margin: 0px; overflow: hidden;">
-    <a-scene embeded arjs>
-        <a-marker preset="hiro">
-            <a-box 
-                position="0 0.5 0" 
-                material="color: red"
-                animation=
-                "property: rotation;
-                to: 0 360 0;
-                dur: 3000;
-                easing: linear;
-                loop: true"
-                >
-            </a-animation>
-            </a-box>
+  <head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+  </head>
 
-        </a-marker>
-        <a-entity camera></a-entity>
+  <body style="margin: 0px; overflow: hidden;">
+    <a-scene embedded arjs>
+      <a-marker preset="hiro">
+        <a-entity 
+          text="value: Say 'Info' to learn about this animal; align: center; color: red;" 
+          position="0 1 0"
+          scale="2 2 2"
+          look-at="[camera]">
+        </a-entity>
+      </a-marker>
+
+      <a-entity camera></a-entity>
     </a-scene>
-
-
-
-
-
-</body>
-</html> 
+  </body>
+</html>
