@@ -1,7 +1,6 @@
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
 const recognition = new SpeechRecognition();
-recognition.lang = 'en-US'; // oder 'de-DE'
+recognition.lang = 'en-US'; // Oder 'de-DE'
 recognition.continuous = true;
 recognition.interimResults = false;
 
@@ -10,23 +9,34 @@ recognition.onresult = (event) => {
   console.log('Heard:', transcript);
 
   if (transcript.includes("info")) {
-    const eagleText = document.querySelector("#eagleText");
-    if (eagleText) {
-      eagleText.setAttribute("text", {
-        value: "Eagles have amazing eyesight and can spot prey from 2km."
-      });
+    // Eagle
+    const eagleMarker = document.querySelector("a-marker[url*='Eagle']");
+    if (eagleMarker?.object3D.visible) {
+      const eagleText = document.querySelector("#eagleText");
+      if (eagleText) {
+        eagleText.setAttribute("text", {
+          value: "Eagles have amazing eyesight and can spot prey from 2km."
+        });
+      }
+      const eagleAudio = document.querySelector("#eagleAudio");
+      eagleAudio?.play();
     }
 
-    const audio = document.querySelector("#eagleAudio");
-  if (audio) {
-    audio.play().catch(e => console.error("Audio error:", e));
-  }
-
+    // Gorilla
+    const gorillaMarker = document.querySelector("a-marker[url*='Gorilla']");
+    if (gorillaMarker?.object3D.visible) {
+      const gorillaText = document.querySelector("#gorillaText");
+      if (gorillaText) {
+        gorillaText.setAttribute("text", {
+          value: "Gorillas live in families and are very intelligent animals."
+        });
+      }
+      const gorillaAudio = document.querySelector("#gorillaAudio");
+      gorillaAudio?.play();
+    }
   }
 };
 
-recognition.onerror = (event) => {
-  console.error('Speech recognition error:', event.error);
-};
-
+recognition.onerror = (e) => console.error("Speech recognition error:", e.error);
+recognition.onend = () => recognition.start(); // Autorestart bei Unterbrechung
 recognition.start();

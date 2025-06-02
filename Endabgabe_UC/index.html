@@ -11,6 +11,7 @@
         
         <a-assets>
             <audio id="eagleAudio" src="eagle_audio.mp3"></audio>
+            <audio id="gorillaAudio" src="gorilla_audio.mp3"></audio>
         </a-assets>
         
         <a-marker type="pattern" url="pattern-Eagle.patt">
@@ -37,18 +38,24 @@
             </a-entity>
           </a-marker>
 
-      <a-marker type="pattern" url="pattern-Gorilla.patt">
-        <a-entity 
-          text="value: Say 'Info' to learn about Gorillas;
-                 align: center;   color: red;" 
-          position="0 1 0"
-          scale="2 2 2"
-          look-at="[camera]">
-        </a-entity>
-      </a-marker>
-
-      <a-entity camera></a-entity>
-    </a-scene>
+          <a-marker type="pattern" url="pattern-Gorilla.patt">
+            <a-entity position="0 1 0" id="gorillaLabel" look-at="[camera]">
+              <a-plane width="4.5" height="1" color="#ffffff" opacity="0.8"></a-plane>
+              <a-entity
+                id="gorillaText"
+                text="value: Say 'Info' to learn about Gorillas;
+                      align: center;
+                      color: #222;
+                      width: 4;
+                      font: https://cdn.aframe.io/fonts/DejaVu-sdf.fnt;"
+                position="0 0 0.01">
+              </a-entity>
+            </a-entity>
+          </a-marker>
+    
+          <a-entity camera></a-entity>
+        </a-scene>
+    
     <script src="main.js"></script>
   </body>
 </html>
