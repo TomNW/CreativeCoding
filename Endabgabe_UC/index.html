@@ -8,9 +8,26 @@
 
   <body style="margin: 0px; overflow: hidden;">
     <a-scene embedded arjs>
-      <a-marker preset="hiro">
+      <a-marker type="pattern" url="pattern-Eagle.patt">
+        <a-plane 
         <a-entity 
-          text="value: Say 'Info' to learn about this animal; align: center; color: red;" 
+          
+        text="value: Say 'Info' to learn about Eagles; 
+                align: center;
+                color: #222;
+                width: 8;
+                font: https://cdn.aframe.io/fonts/DejaVu-sdf.fnt;"
+          
+        position="0 1 0"
+        look-at="[camera]">
+        
+        </a-entity>
+      </a-marker>
+
+      <a-marker type="pattern" url="pattern-Gorilla.patt">
+        <a-entity 
+          text="value: Say 'Info' to learn about Gorillas;
+                 align: center;   color: red;" 
           position="0 1 0"
           scale="2 2 2"
           look-at="[camera]">
