@@ -5,6 +5,7 @@ recognition.continuous = true;
 recognition.interimResults = false;
 
 let infoRequested = false;
+let isRecognitionActive = false;
 
 recognition.onresult = (event) => {
   const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
@@ -15,16 +16,27 @@ recognition.onresult = (event) => {
   }
 };
 
-recognition.onerror = (e) => console.error("Speech recognition error:", e.error);
-recognition.onend = () => recognition.start();
-recognition.start();
+recognition.onerror = (e) => {
+  console.error("Speech recognition error:", e.error);
+  isRecognitionActive = false; // Fehler → Erkennung als gestoppt markieren
+};
 
-function playAudioOnce(audio) {
-  if (audio.paused) {
-    audio.currentTime = 0;
-    audio.play();
+recognition.onstart = () => {
+  console.log("Speech recognition started");
+  isRecognitionActive = true; // Erkennung läuft
+};
+
+recognition.onend = () => {
+  console.log("Speech recognition ended");
+  if (isRecognitionActive) {
+    console.log("Restarting recognition...");
+    recognition.start();
+  } else {
+    console.log("Not restarting recognition due to previous error");
   }
-}
+};
+
+recognition.start();
 
 function updateDisplay() {
   const eagleMarker = document.querySelector("a-marker[url*='Eagle']");
@@ -56,8 +68,10 @@ function updateDisplay() {
     eagleAudio.pause();
     gorillaAudio.pause();
 
-    playAudioOnce(combinedAudio);
-
+    if (combinedAudio.paused) {
+      combinedAudio.currentTime = 0;
+      combinedAudio.play();
+    }
   } else if (eagleMarker?.object3D.visible) {
     combinedLabel.setAttribute("visible", false);
     eagleLabel.setAttribute("visible", true);
@@ -66,11 +80,13 @@ function updateDisplay() {
     const eagleText = document.querySelector("#eagleText");
     eagleText.setAttribute("text", {value: "Eagles have amazing eyesight and can spot prey from 2km."});
 
+    if (eagleAudio.paused) {
+      eagleAudio.currentTime = 0;
+      eagleAudio.play();
+    }
+
     gorillaAudio.pause();
     combinedAudio.pause();
-
-    playAudioOnce(eagleAudio);
-
   } else if (gorillaMarker?.object3D.visible) {
     combinedLabel.setAttribute("visible", false);
     eagleLabel.setAttribute("visible", false);
@@ -79,11 +95,13 @@ function updateDisplay() {
     const gorillaText = document.querySelector("#gorillaText");
     gorillaText.setAttribute("text", {value: "Gorillas live in families and are very intelligent animals."});
 
+    if (gorillaAudio.paused) {
+      gorillaAudio.currentTime = 0;
+      gorillaAudio.play();
+    }
+
     eagleAudio.pause();
     combinedAudio.pause();
-
-    playAudioOnce(gorillaAudio);
-
   } else {
     combinedLabel.setAttribute("visible", false);
     eagleLabel.setAttribute("visible", false);
@@ -95,7 +113,6 @@ function updateDisplay() {
   }
 }
 
-// Update alle 500ms, um Marker-Sichtbarkeit zu prüfen
 setInterval(() => {
   if(infoRequested) updateDisplay();
 }, 500);
