@@ -58,3 +58,24 @@ const canvas = document.getElementById("drawCanvas");
     osc.start();
     osc.stop(audioCtx.currentTime + 0.1);
   }
+
+  // Icons klicken -> Eingabefeld auslösen
+document.getElementById("colorBtn").addEventListener("click", () => {
+  document.getElementById("colorPicker").click();
+});
+document.getElementById("brushBtn").addEventListener("click", () => {
+  document.getElementById("brushSize").click();
+});
+
+const brushBtn = document.getElementById("brushBtn");
+const brushSizeInput = document.getElementById("brushSize");
+
+brushBtn.addEventListener("click", (e) => {
+  brushSizeInput.classList.toggle("visible");
+});
+
+document.addEventListener("click", (e) => {
+  if (!brushBtn.contains(e.target) && e.target !== brushSizeInput) {
+    brushSizeInput.classList.remove("visible");
+  }
+});

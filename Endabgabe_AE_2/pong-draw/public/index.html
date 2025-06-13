@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Draw-Pong</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+    canvas {
+      display: block;
+      background: #ffffff;
+    }
+    #scoreboard {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 20px;
+    }
+  </style>
+  </head>
+  <body>
+  <div id="scoreboard">Links: 0 | Rechts: 0</div>
+  <button id="startBtn" style="position: fixed; top: 50px; left: 50%; transform: translateX(-50%); padding: 10px 20px; font-size: 16px; display: none;">
+  Spiel starten
+  </button>
+  <canvas id="gameCanvas"></canvas>
+  <script src="main.js"></script>
+  <script>
+  const ws = new WebSocket("ws://" + location.host);
+  </script>
+
+</body>
+</html>

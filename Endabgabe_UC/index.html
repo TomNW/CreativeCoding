@@ -5,64 +5,50 @@
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
   </head>
-
-  <body style="margin: 0px; overflow: hidden;">
+  <body style="margin: 0; overflow: hidden;">
     <a-scene embedded arjs>
-        
-        <a-assets>
-            <audio id="eagleAudio" src="eagle_audio.mp3"></audio>
-            <audio id="gorillaAudio" src="gorilla_audio.mp3"></audio>
-        </a-assets>
-        
-        <a-marker type="pattern" url="pattern-Eagle.patt">
-            <a-entity position="0 0 -2" id="eagleLabel" look-at="[camera]">
-              
-            
-            <a-plane 
-            width="7" 
-            height="0.8" 
-            color="#ffffff" 
-            opacity="0.8"></a-plane>
-          
-              <a-entity 
-                id="eagleText"
-                text="value: Say 'Info' to learn about Eagles;
-                      align: center;
-                      color: #222;
-                      width: 6;
-                      font: https://cdn.aframe.io/fonts/Exo2Bold.fnt;"
-                position="0 0 0.5">
-              
-            
-            </a-entity>
-            </a-entity>
-          </a-marker>
 
-          <a-marker type="pattern" url="pattern-Gorilla.patt">
-            <a-entity position="0 0 -2" id="gorillaLabel" look-at="[camera]">
-              
-                <a-plane 
-              width="7" 
-              height="0.8" 
-              color="#ffffff" 
-              opacity="0.8">
-            </a-plane>
-              
-            <a-entity
-                id="gorillaText"
-                text="value: Say 'Info' to learn about Gorillas;
-                      align: center;
-                      color: #222;
-                      width: 6;
-                      font: https://cdn.aframe.io/fonts/Exo2Bold.fnt;"
-                position="0 0 0.5">
-              </a-entity>
-            </a-entity>
-          </a-marker>
-    
-          <a-entity camera></a-entity>
-        </a-scene>
-    
+      <a-assets>
+        <audio id="eagleAudio" src="eagle_audio.mp3"></audio>
+        <audio id="gorillaAudio" src="gorilla_audio.mp3"></audio>
+        <audio id="combinedAudio" src="eagle_gorilla.mp3"></audio>
+      </a-assets>
+
+      <a-marker type="pattern" url="pattern-Eagle.patt">
+        <a-entity position="0 0 -2" id="eagleLabel" look-at="[camera]">
+          <a-plane width="7" height="0.8" color="#ffffff" opacity="0.8"></a-plane>
+          <a-entity 
+            id="eagleText"
+            text="value: Say 'Info' to learn about Eagles; align: center; color: #222; width: 6; font: https://cdn.aframe.io/fonts/Exo2Bold.fnt;"
+            position="0 0 0.5">
+          </a-entity>
+        </a-entity>
+      </a-marker>
+
+      <a-marker type="pattern" url="pattern-Gorilla.patt">
+        <a-entity position="0 0 -2" id="gorillaLabel" look-at="[camera]">
+          <a-plane width="7" height="0.8" color="#ffffff" opacity="0.8"></a-plane>
+          <a-entity 
+            id="gorillaText"
+            text="value: Say 'Info' to learn about Gorillas; align: center; color: #222; width: 6; font: https://cdn.aframe.io/fonts/Exo2Bold.fnt;"
+            position="0 0 0.5">
+          </a-entity>
+        </a-entity>
+      </a-marker>
+
+      <!-- combinedLabel außerhalb der Marker -->
+      <a-entity id="combinedLabel" position="0 1 -2" visible="false" look-at="[camera]">
+        <a-plane width="8" height="1" color="#ffffcc" opacity="0.9"></a-plane>
+        <a-entity
+          id="combinedText"
+          text="value: Eagle and Gorilla together!; align: center; color: #222; width: 7; font: https://cdn.aframe.io/fonts/Exo2Bold.fnt;"
+          position="0 0 0.5">
+        </a-entity>
+      </a-entity>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
     <script src="main.js"></script>
   </body>
 </html>
