@@ -19,6 +19,13 @@ recognition.onerror = (e) => console.error("Speech recognition error:", e.error)
 recognition.onend = () => recognition.start();
 recognition.start();
 
+function playAudioOnce(audio) {
+  if (audio.paused) {
+    audio.currentTime = 0;
+    audio.play();
+  }
+}
+
 function updateDisplay() {
   const eagleMarker = document.querySelector("a-marker[url*='Eagle']");
   const gorillaMarker = document.querySelector("a-marker[url*='Gorilla']");
@@ -32,7 +39,6 @@ function updateDisplay() {
   const combinedAudio = document.querySelector("#combinedAudio");
 
   if (!infoRequested) {
-    // Wenn kein "info" gesagt wurde, alles ausblenden & Audio stoppen
     eagleLabel.setAttribute("visible", false);
     gorillaLabel.setAttribute("visible", false);
     combinedLabel.setAttribute("visible", false);
@@ -50,8 +56,8 @@ function updateDisplay() {
     eagleAudio.pause();
     gorillaAudio.pause();
 
-    combinedAudio.currentTime = 0;
-    combinedAudio.play();
+    playAudioOnce(combinedAudio);
+
   } else if (eagleMarker?.object3D.visible) {
     combinedLabel.setAttribute("visible", false);
     eagleLabel.setAttribute("visible", true);
@@ -60,11 +66,11 @@ function updateDisplay() {
     const eagleText = document.querySelector("#eagleText");
     eagleText.setAttribute("text", {value: "Eagles have amazing eyesight and can spot prey from 2km."});
 
-    eagleAudio.currentTime = 0;
-    eagleAudio.play();
-
     gorillaAudio.pause();
     combinedAudio.pause();
+
+    playAudioOnce(eagleAudio);
+
   } else if (gorillaMarker?.object3D.visible) {
     combinedLabel.setAttribute("visible", false);
     eagleLabel.setAttribute("visible", false);
@@ -73,11 +79,11 @@ function updateDisplay() {
     const gorillaText = document.querySelector("#gorillaText");
     gorillaText.setAttribute("text", {value: "Gorillas live in families and are very intelligent animals."});
 
-    gorillaAudio.currentTime = 0;
-    gorillaAudio.play();
-
     eagleAudio.pause();
     combinedAudio.pause();
+
+    playAudioOnce(gorillaAudio);
+
   } else {
     combinedLabel.setAttribute("visible", false);
     eagleLabel.setAttribute("visible", false);
