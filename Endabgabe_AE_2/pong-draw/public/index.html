@@ -24,6 +24,25 @@
       border-radius: 8px;
       font-size: 20px;
     }
+    #leftEdge, #rightEdge {
+  position: fixed;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#leftEdge {
+  left: 0;
+  background: blue;
+}
+
+#rightEdge {
+  right: 0;
+  background: red;
+}
+
   </style>
   </head>
   <body>
@@ -32,10 +51,10 @@
   Spiel starten
   </button>
   <canvas id="gameCanvas"></canvas>
+  <div id="leftEdge"></div>
+  <div id="rightEdge"></div>
   <script src="main.js"></script>
-  <script>
-  const ws = new WebSocket("ws://" + location.host);
-  </script>
+  
 
 </body>
 </html>

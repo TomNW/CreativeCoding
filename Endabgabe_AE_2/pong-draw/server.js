@@ -1,58 +1,58 @@
-import express from 'express';
-import http from 'http';
-import { WebSocketServer } from 'ws';
+import http from "http";
+import fs from "fs";
+import path from "path";
+import { WebSocketServer } from "ws";
 
-const app = express();
-const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+const PUBLIC_DIR = path.join(process.cwd(), "public");
 
-app.use(express.static('public'));
+const server = http.createServer((req, res) => {
+  console.log("Request URL:", req.url);
 
-let clients = [];
-let host = null;
+  
+  let filePath = req.url === "/" ? "index.html" : req.url.substring(1);
 
-wss.on('connection', (ws) => {
-  console.log('Client connected');
-  clients.push(ws);
-  if (!host) {
-    host = ws;
-    ws.send(JSON.stringify({ type: 'host' }));
-  }
+ 
+  filePath = path.join(PUBLIC_DIR, filePath);
 
-  ws.on('message', (message) => {
-  let parsed;
-  try {
-    parsed = JSON.parse(message);
-  } catch (e) {
-    console.error("Fehler beim Parsen:", e);
+  
+  if (!filePath.startsWith(PUBLIC_DIR)) {
+    res.writeHead(403);
+    res.end("Forbidden");
     return;
   }
 
-  // 💡 Spielerkennung ergänzen bei Linien
-  if (parsed.type === "line") {
-    parsed.line.player = (ws === host) ? "host" : "client";
-  }
-
-  const newMessage = JSON.stringify(parsed);
-
-  // Broadcast an alle anderen
-  for (const client of clients) {
-    if (client !== ws && client.readyState === WebSocket.OPEN) {
-      client.send(newMessage);
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("404 Not Found");
+      return;
     }
-  }
-});
+    
+    const ext = path.extname(filePath);
+    let contentType = "text/plain";
+    if (ext === ".html") contentType = "text/html";
+    else if (ext === ".js") contentType = "application/javascript";
+    else if (ext === ".css") contentType = "text/css";
+    else if (ext === ".json") contentType = "application/json";
 
-
-  ws.on('close', () => {
-    clients = clients.filter(c => c !== ws);
-    if (ws === host) {
-      host = clients[0] || null;
-      if (host) host.send(JSON.stringify({ type: 'host' }));
-    }
+    res.writeHead(200, { "Content-Type": contentType });
+    res.end(data);
   });
 });
 
-server.listen(3000, () => {
-  console.log('Server läuft auf http://localhost:3000');
+const wss = new WebSocketServer({ server });
+
+wss.on("connection", (ws) => {
+  console.log("Client verbunden");
+
+  ws.on("message", (message) => {
+    console.log("Nachricht erhalten:", message.toString());
+    
+  });
+
+  ws.send(JSON.stringify({ type: "host" })); 
+});
+
+server.listen(8080, () => {
+  console.log("Server läuft auf http://localhost:8080");
 });

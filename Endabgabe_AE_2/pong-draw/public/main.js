@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const ws = new WebSocket("ws://" + location.host);
+const ws = new WebSocket("wss://" + location.host);
 
 let isHost = false;
 let lines = [];
@@ -19,6 +19,9 @@ let ball = {
   vy: 3,
   radius: 10
 };
+
+let hitSound = null;
+let playHitSound = false;
 
 // Zeichnen
 canvas.addEventListener("mousedown", (e) => {
@@ -38,7 +41,7 @@ canvas.addEventListener("mouseup", () => {
     const line = {
       ...currentLine,
       time: Date.now(),
-      player: isHost ? "host" : "client" // 💡 Hier kommt die Info über den Spieler rein
+      player: isHost ? "host" : "client"
     };
     lines.push(line);
     ws.send(JSON.stringify({ type: "line", line }));
@@ -47,10 +50,8 @@ canvas.addEventListener("mouseup", () => {
   currentLine = null;
 });
 
-// WebSocket-Nachrichten
 ws.onmessage = async (event) => {
   let msg;
-
   try {
     if (event.data instanceof Blob) {
       const text = await event.data.text();
@@ -73,7 +74,7 @@ ws.onmessage = async (event) => {
 
   if (msg.type === "start") {
     resetBall();
-    gameLoop(); // Spiel starten
+    gameLoop();
   }
 
   if (msg.type === "line") {
@@ -92,10 +93,21 @@ ws.onmessage = async (event) => {
 };
 
 startBtn.addEventListener("click", () => {
+  
+  if (!hitSound) {
+    hitSound = new Audio('hit-sound.mp3');
+    hitSound.preload = "auto";
+    
+    hitSound.play().then(() => {
+      hitSound.pause();
+      hitSound.currentTime = 0;
+    }).catch(() => {});
+  }
+
   resetBall();
   gameLoop();
   ws.send(JSON.stringify({ type: "start" }));
-  startBtn.style.display = "none"; // Button ausblenden
+  startBtn.style.display = "none";
 });
 
 function resetBall() {
@@ -159,6 +171,8 @@ function reflectBall(line) {
   const dot = ball.vx * nx + ball.vy * ny;
   ball.vx -= 2 * dot * nx;
   ball.vy -= 2 * dot * ny;
+
+  playHitSound = true;
 }
 
 function distanceToSegment(px, py, x1, y1, x2, y2) {
@@ -191,13 +205,12 @@ function drawLines() {
     ctx.moveTo(line.x1, line.y1);
     ctx.lineTo(line.x2, line.y2);
 
-    // 💡 Strichfarbe abhängig vom Spieler
     if (line.player === "host") {
       ctx.strokeStyle = "blue";
     } else if (line.player === "client") {
       ctx.strokeStyle = "red";
     } else {
-      ctx.strokeStyle = "gray"; // fallback für alte Linien
+      ctx.strokeStyle = "gray";
     }
 
     ctx.stroke();
@@ -207,11 +220,10 @@ function drawLines() {
     ctx.beginPath();
     ctx.moveTo(currentLine.x1, currentLine.y1);
     ctx.lineTo(currentLine.x2, currentLine.y2);
-    ctx.strokeStyle = isHost ? "blue" : "red"; // 💡 eigene Farbe beim Zeichnen
+    ctx.strokeStyle = isHost ? "blue" : "red";
     ctx.stroke();
   }
 }
-
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -223,11 +235,16 @@ function gameLoop() {
   cleanupLines();
   drawBall();
   drawLines();
+
+  if (playHitSound && hitSound) {
+    hitSound.play().catch(() => {});
+    playHitSound = false;
+  }
+
   requestAnimationFrame(gameLoop);
 }
 
 ws.onopen = () => {
   console.log("WebSocket verbunden");
   updateScore();
-  // Kein gameLoop() hier, es wird durch "start" gesteuert!
 };
