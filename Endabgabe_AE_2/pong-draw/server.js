@@ -1,73 +1,62 @@
-// Importiere HTTP-Modul zum Erstellen eines Servers
-import http from "http";
-// Modul zum Lesen von Dateien
-import fs from "fs";
-// Pfade verarbeiten (für Dateipfade etc.)
-import path from "path";
-// WebSocket-Server importieren
-import { WebSocketServer } from "ws";
+import express from 'express';
+import http from 'http';
+import { WebSocketServer } from 'ws';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Ordner mit den öffentlichen Dateien (HTML, JS usw.)
-const PUBLIC_DIR = path.join(process.cwd(), "public");
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
 
-// Erstelle HTTP-Server
-const server = http.createServer((req, res) => {
-  console.log("Request URL:", req.url); // Zeigt an, welche Datei angefragt wurde
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  // Wenn "/" aufgerufen wird, dann lade index.html
-  let filePath = req.url === "/" ? "index.html" : req.url.substring(1);
+app.use(express.static(path.join(__dirname, 'public')));
 
-  // Setze vollständigen Pfad zur Datei
-  filePath = path.join(PUBLIC_DIR, filePath);
+let clients = [];
+let host = null;
 
-  // Sicherheit: Nur auf Dateien im public-Ordner zugreifen
-  if (!filePath.startsWith(PUBLIC_DIR)) {
-    res.writeHead(403); // Zugriff verweigert
-    res.end("Forbidden");
-    return;
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+  clients.push(ws);
+
+  if (!host) {
+    host = ws;
+    ws.send(JSON.stringify({ type: 'host' }));
   }
 
-  // Versuche die Datei zu lesen
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      // Wenn Datei nicht gefunden, gib 404 zurück
-      res.writeHead(404, { "Content-Type": "text/plain" });
-      res.end("404 Not Found");
+  ws.on('message', (message) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(message);
+    } catch (e) {
+      console.error("Fehler beim Parsen:", e);
       return;
     }
 
-    // Dateityp ermitteln
-    const ext = path.extname(filePath);
-    let contentType = "text/plain";
-    if (ext === ".html") contentType = "text/html";
-    else if (ext === ".js") contentType = "application/javascript";
-    else if (ext === ".css") contentType = "text/css";
-    else if (ext === ".json") contentType = "application/json";
+    if (parsed.type === "line") {
+      parsed.line.player = (ws === host) ? "host" : "client";
+    }
 
-    // Antwort mit richtiger Datei und Typ senden
-    res.writeHead(200, { "Content-Type": contentType });
-    res.end(data);
+    const newMessage = JSON.stringify(parsed);
+
+    for (const client of clients) {
+      if (client !== ws && client.readyState === ws.OPEN) {
+        client.send(newMessage);
+      }
+    }
+  });
+
+  ws.on('close', () => {
+    clients = clients.filter(c => c !== ws);
+    if (ws === host) {
+      host = clients[0] || null;
+      if (host) host.send(JSON.stringify({ type: 'host' }));
+    }
   });
 });
 
-// WebSocket-Server an den HTTP-Server anhängen
-const wss = new WebSocketServer({ server });
-
-// Wenn sich ein Client verbindet
-wss.on("connection", (ws) => {
-  console.log("Client verbunden");
-
-  // Wenn eine Nachricht vom Client kommt
-  ws.on("message", (message) => {
-    console.log("Nachricht erhalten:", message.toString());
-    // (Hier kann man später Nachrichten an andere Clients weiterleiten usw.)
-  });
-
-  // Dem ersten Client sagen, dass er der Host ist
-  ws.send(JSON.stringify({ type: "host" }));
-});
-
-// Starte den Server auf Port 8080
-server.listen(8080, () => {
-  console.log("Server läuft auf http://localhost:8080");
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`✅ Server läuft auf http://localhost:${PORT}`);
 });
