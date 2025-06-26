@@ -1,6 +1,7 @@
 {
   "name": "pong-draw",
   "version": "1.0.0",
+  "description": "Multiplayer Pong-Zeichenspiel mit WebSockets",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -9,5 +10,8 @@
   "dependencies": {
     "express": "^4.18.2",
     "ws": "^8.15.1"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
